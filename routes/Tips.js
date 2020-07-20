@@ -3,13 +3,18 @@ const router = require("express").Router();
 const { varifyToken } = require("../util/utils");
 const tipsController = require("../controller/TipsController");
 
+// ...create new tips
 router.post(
   "/add",
-  varifyToken,
+  varifyToken, //..check if logged in
   tipsController.validate("createTips"),
   tipsController.createTips
 );
 
+// ...get all tipses
 router.get("/all", tipsController.getAllTipses);
+
+// get detail of tips
+router.get("/detail/:id", tipsController.getTipsDetail);
 
 module.exports = router;
