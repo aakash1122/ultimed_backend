@@ -2,6 +2,7 @@ const { body } = require("express-validator");
 const { handleValidation } = require("../util/utils");
 const Medicine = require("../models/Medicine");
 
+// ...create new medicine
 const addMedicine = async (req, res) => {
   try {
     handleValidation(req, res);
@@ -32,6 +33,7 @@ const addMedicine = async (req, res) => {
   }
 };
 
+// ...get all medicine
 const getAllMedicine = async (req, res) => {
   try {
     const allMedicines = await Medicine.find({});
@@ -41,17 +43,51 @@ const getAllMedicine = async (req, res) => {
   }
 };
 
+// ...search medicine
+const search = async (req, res) => {
+  handleValidation(req, res);
+  try {
+    const { name } = req.body;
+    const medicine = await Medicine.findOne({ name });
+    if (medicine) return res.status(200).json(medicine);
+    return res.sendStatus(404);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+};
+
+// ...validator and sanitizer
 const validate = (method) => {
   switch (method) {
     case "addMedicine": {
       return [
-        body("name").trim().notEmpty().withMessage("Name Required"),
-        body("desc").trim().notEmpty().withMessage("Description required"),
-        body("groupName").trim().notEmpty().withMessage("Group Name required"),
-        body("company").trim().notEmpty().withMessage("company required"),
-        body("packSize").trim().notEmpty().withMessage("Pack size required"),
-        body("price").trim().notEmpty().withMessage("price required"),
+        body("name").trim().notEmpty().withMessage("Name Required").escape(),
+        body("desc")
+          .trim()
+          .notEmpty()
+          .withMessage("Description required")
+          .escape(),
+        body("groupName")
+          .trim()
+          .notEmpty()
+          .withMessage("Group Name required")
+          .escape(),
+        body("company")
+          .trim()
+          .notEmpty()
+          .withMessage("company required")
+          .escape(),
+        body("packSize")
+          .trim()
+          .notEmpty()
+          .withMessage("Pack size required")
+          .escape(),
+        body("price").trim().notEmpty().withMessage("price required").escape(),
       ];
+    }
+    case "search": {
+      return [body("name").trim().notEmpty().escape()];
     }
   }
 };
@@ -60,4 +96,5 @@ module.exports = {
   addMedicine,
   getAllMedicine,
   validate,
+  search,
 };

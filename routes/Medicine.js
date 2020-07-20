@@ -15,4 +15,11 @@ router.post(
 // ...get all medicine
 router.get("/all", medicineController.getAllMedicine);
 
+// get single medicine info
+router.get(
+  "/search",
+  medicineController.validate("search"),
+  medicineController.search
+);
+
 module.exports = router;
