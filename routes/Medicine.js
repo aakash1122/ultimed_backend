@@ -7,9 +7,17 @@ const router = express.Router();
 // ..add new medicine
 router.post(
   "/add",
-  medicineController.validate("addMedicine"),
   varifyToken,
+  medicineController.validate("addMedicine"),
   medicineController.addMedicine
+);
+
+// update medicine
+router.post(
+  "/update",
+  varifyToken,
+  medicineController.validate("addMedicine"),
+  medicineController.updateMedicine
 );
 
 // ...get all medicine

@@ -33,6 +33,31 @@ const addMedicine = async (req, res) => {
   }
 };
 
+// ...update medicine
+const updateMedicine = async (req, res) => {
+  handleValidation(req, res);
+  try {
+    const { name, desc, groupName, company, packSize, price, _id } = req.body;
+    const resp = await Medicine.updateOne(
+      { _id: _id },
+      {
+        name,
+        desc,
+        groupName,
+        company,
+        packSize,
+        price,
+      }
+    );
+    console.log(resp);
+    if (!resp) res.sendStatus(404);
+    return res.status(201).json(resp);
+  } catch (error) {
+    console.error(error);
+    return res.sendStatus(500);
+  }
+};
+
 // ...get all medicine
 const getAllMedicine = async (req, res) => {
   try {
@@ -94,6 +119,7 @@ const validate = (method) => {
 
 module.exports = {
   addMedicine,
+  updateMedicine,
   getAllMedicine,
   validate,
   searchByName,
