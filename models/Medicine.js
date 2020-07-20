@@ -12,8 +12,10 @@ const MedicineSchema = new Schema({
   groupName: { type: String, trim: true },
   company: { type: String, trim: true },
   date: { type: Date, default: Date.now },
-  packSize: { type: number, default: 1 },
+  packSize: { type: Number, required: true },
   price: Number,
 });
 
 const Medicine = mongoose.model("Medicine", MedicineSchema);
+
+module.exports = Medicine;

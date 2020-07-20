@@ -10,6 +10,7 @@ router.post(
   doctorController.createDoctor
 );
 
+// ...login user
 router.post(
   "/login",
   doctorController.validate("checkDoctor"),

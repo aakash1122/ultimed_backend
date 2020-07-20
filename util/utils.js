@@ -1,6 +1,7 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 
 const hashPassword = (plainPassword) => {
   const salt = bcrypt.genSaltSync(5);
@@ -20,10 +21,18 @@ const handleValidation = (req, res) => {
   }
 };
 
-const varifyToken = (req, res, next) => {
+const extractToken = (req) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
     const token = authHeader.split(" ")[1];
+    return token;
+  }
+  return;
+};
+
+const varifyToken = (req, res, next) => {
+  const token = extractToken(req);
+  if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         return res.sendStatus(403);
