@@ -44,7 +44,7 @@ const getAllMedicine = async (req, res) => {
 };
 
 // ...search medicine
-const search = async (req, res) => {
+const searchByName = async (req, res) => {
   handleValidation(req, res);
   try {
     const { name } = req.body;
@@ -96,5 +96,5 @@ module.exports = {
   addMedicine,
   getAllMedicine,
   validate,
-  search,
+  searchByName,
 };

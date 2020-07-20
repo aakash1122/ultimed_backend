@@ -9,6 +9,7 @@ const {
 } = require("../util/utils");
 const Doctor = require("../models/Doctor");
 
+// ...register new doctor
 const createDoctor = async (req, res) => {
   handleValidation(req, res);
   try {
@@ -40,6 +41,7 @@ const createDoctor = async (req, res) => {
   }
 };
 
+// ...login doctor
 const loginDoctor = async (req, res) => {
   handleValidation(req, res);
   const { email, password } = req.body;
@@ -67,6 +69,7 @@ const loginDoctor = async (req, res) => {
   }
 };
 
+// ...validate data
 const validate = (method) => {
   switch (method) {
     case "createDoctor": {

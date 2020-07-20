@@ -7,7 +7,8 @@ const { connectDb } = require("./util/db");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
-const MedicineRouter = require("./routes/Medicine");
+const medicineRouter = require("./routes/Medicine");
+const tipsRouter = require("./routes/Tips");
 
 const app = express();
 connectDb();
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
-app.use("/medicine", MedicineRouter);
+app.use("/medicine", medicineRouter);
+app.use("/tips", tipsRouter);
 
 module.exports = app;

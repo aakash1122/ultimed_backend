@@ -6,8 +6,9 @@ const TipSchema = new Schema({
   title: {
     type: String,
     trim: true,
+    minlength: 10,
   },
-  desc: String,
+  desc: { type: String, trim: true, minlength: 100 },
   created_at: { type: Date, default: Date.now },
   author: { type: Schema.Types.ObjectId, ref: "Doctor" },
 });

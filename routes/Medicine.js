@@ -19,7 +19,7 @@ router.get("/all", medicineController.getAllMedicine);
 router.get(
   "/search",
   medicineController.validate("search"),
-  medicineController.search
+  medicineController.searchByName
 );
 
 module.exports = router;
