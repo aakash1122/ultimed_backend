@@ -69,6 +69,19 @@ const loginDoctor = async (req, res) => {
   }
 };
 
+const profile = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const profile = await Doctor.findOne({ _id: id })
+      .populate("tipses")
+      .select("-password");
+    return res.status(200).json(profile);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(404);
+  }
+};
+
 // ...validate data
 const validate = (method) => {
   switch (method) {
@@ -117,4 +130,4 @@ const validate = (method) => {
   }
 };
 
-module.exports = { validate, createDoctor, loginDoctor };
+module.exports = { validate, createDoctor, loginDoctor, profile };

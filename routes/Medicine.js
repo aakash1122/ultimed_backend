@@ -15,7 +15,7 @@ router.post(
 // ...get all medicine
 router.get("/all", medicineController.getAllMedicine);
 
-// get single medicine info
+// search medicine info
 router.get(
   "/search",
   medicineController.validate("search"),
