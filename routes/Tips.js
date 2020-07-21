@@ -11,6 +11,14 @@ router.post(
   tipsController.createTips
 );
 
+// ...Update  tips
+router.post(
+  "/update",
+  varifyToken, //..check if logged in
+  tipsController.validate("createTips"),
+  tipsController.updataTips
+);
+
 // ...get all tipses
 router.get("/all", tipsController.getAllTipses);
 

@@ -27,6 +27,29 @@ const createTips = async (req, res) => {
   }
 };
 
+// update Tips
+const updataTips = async (req, res) => {
+  try {
+    handleValidation(req, res);
+    const { title, desc, _id } = req.body;
+    const tips = await Tips.findOne({ _id });
+    console.log(tips);
+    if (!tips) res.sendStatus(404);
+    // check author
+    if (tips.author.toString() === req.user.id.toString()) {
+      tips.title = title;
+      tips.desc = desc;
+      await tips.save();
+      res.status(202).json(tips);
+    } else {
+      return res.sendStatus(401);
+    }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
 // get all tips
 const getAllTipses = async (req, res) => {
   try {
@@ -86,6 +109,7 @@ const validate = (method) => {
 
 module.exports = {
   createTips,
+  updataTips,
   getAllTipses,
   getTipsDetail,
   validate,
