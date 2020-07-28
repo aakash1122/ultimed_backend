@@ -17,8 +17,10 @@ const checkPassword = (plainPassword, hash) => {
 const handleValidation = (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length > 0) {
-    return res.status(400).json(errors);
+    res.status(400).send(errors);
+    return false;
   }
+  return true;
 };
 
 const extractToken = (req) => {

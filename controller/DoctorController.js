@@ -11,33 +11,35 @@ const Doctor = require("../models/Doctor");
 
 // ...register new doctor
 const createDoctor = async (req, res) => {
-  handleValidation(req, res);
-  try {
-    const {
-      name,
-      email,
-      password,
-      phone,
-      chamberLocation,
-      licenceNo,
-      degree,
-    } = req.body;
-    const hashedPassword = hashPassword(password);
-    const resp = await Doctor.create({
-      name,
-      email,
-      password: hashedPassword,
-      phone,
-      chamberLocation,
-      licenceNo,
-      degree,
-    });
-    return res.status(201).json(resp);
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(400)
-      .send(error.code === 11000 ? "Duplicate User" : "Something Went Wrong");
+  if (handleValidation(req, res)) {
+    try {
+      const {
+        name,
+        email,
+        password,
+        phone,
+        chamberLocation,
+        licenceNo,
+        degree,
+      } = req.body;
+      const hashedPassword = hashPassword(password);
+      const resp = await Doctor.create({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        chamberLocation,
+        licenceNo,
+        degree,
+      });
+      return res.status(201).json(resp);
+    } catch (error) {
+      console.log(error);
+      if (error.code === 11000) {
+        return res.status(409).send({ msg: "User already Exists" });
+      }
+      return res.status(500).send({ msg: "Something Went Wrong" });
+    }
   }
 };
 
@@ -60,10 +62,10 @@ const loginDoctor = async (req, res) => {
         const token = jwt.sign(userdata, process.env.JWT_SECRET);
         return res.json({ token: token, data: userdata });
       } else {
-        return res.send("wrong credentials");
+        return res.status(404).send("User not found");
       }
     }
-    res.send("user not found");
+    return res.status(404).send("User not found");
   } catch (error) {
     console.log(error);
   }
@@ -117,7 +119,8 @@ const validate = (method) => {
         body("phone")
           .trim()
           .isMobilePhone()
-          .withMessage("invalid mobile number"),
+          .withMessage("invalid mobile number")
+          .notEmpty(),
       ];
     }
 

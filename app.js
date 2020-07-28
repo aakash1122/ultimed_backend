@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const cors = require("cors");
 
 const { connectDb } = require("./util/db");
 const indexRouter = require("./routes/index");
@@ -10,6 +11,8 @@ const medicineRouter = require("./routes/Medicine");
 const tipsRouter = require("./routes/Tips");
 
 const app = express();
+app.use(cors({ origin: "*" }));
+
 connectDb();
 
 app.use(logger("dev"));
