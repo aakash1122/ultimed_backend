@@ -26,8 +26,8 @@ router.get("/all", medicineController.getAllMedicine);
 // search medicine info
 router.get(
   "/search",
-  medicineController.validate("search"),
-  medicineController.searchByName
+  medicineController.validate("query"),
+  medicineController.searchMed
 );
 
 module.exports = router;

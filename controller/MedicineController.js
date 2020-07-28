@@ -68,17 +68,51 @@ const getAllMedicine = async (req, res) => {
   }
 };
 
-// ...search medicine
-const searchByName = async (req, res) => {
+const searchMed = async (req, res) => {
   handleValidation(req, res);
   try {
-    const { name } = req.body;
-    const medicine = await Medicine.findOne({ name });
-    if (medicine) return res.status(200).json(medicine);
-    return res.sendStatus(404);
+    const { searchType, query } = req.body;
+    let results;
+    // get medicine by group
+    if (searchType === "group") {
+      results = await searchByGroup(query);
+    }
+    // get medicine by name
+    if (searchType === "name") {
+      results = await searchByName(query);
+    }
+    // if results not empty
+    if (results.length !== 0) {
+      return res.status(200).json(results);
+    } else {
+      // if empty
+      return res.sendStatus(404);
+    }
   } catch (error) {
     console.log(error);
-    return res.sendStatus(500);
+    res.status(500);
+  }
+};
+
+// ...search medicine By Name/company
+const searchByName = async (query) => {
+  try {
+    const medicines = await Medicine.find({ name: query });
+    return medicines;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+// search by group name
+const searchByGroup = async (query) => {
+  try {
+    const medicine = await Medicine.find({ groupName: query });
+    return medicine;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };
 
@@ -111,8 +145,8 @@ const validate = (method) => {
         body("price").trim().notEmpty().withMessage("price required").escape(),
       ];
     }
-    case "search": {
-      return [body("name").trim().notEmpty().escape()];
+    case "query": {
+      return [body("query").trim().notEmpty().escape()];
     }
   }
 };
@@ -122,5 +156,5 @@ module.exports = {
   updateMedicine,
   getAllMedicine,
   validate,
-  searchByName,
+  searchMed,
 };

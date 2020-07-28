@@ -107,6 +107,7 @@ const validate = (method) => {
   }
 };
 
+// export modules
 module.exports = {
   createTips,
   updataTips,
