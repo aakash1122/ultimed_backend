@@ -5,22 +5,23 @@ const Medicine = require("../models/Medicine");
 // ...create new medicine
 const addMedicine = async (req, res) => {
   try {
-    handleValidation(req, res);
-    // ...check if admin
-    if (req.user.isAdmin) {
-      const { name, desc, groupName, company, packSize, price } = req.body;
-      const resp = await Medicine.create({
-        name,
-        desc,
-        groupName,
-        company,
-        packSize,
-        price,
-      });
-      return res.status(201).json(resp);
-    } else {
-      // not admin
-      return res.sendStatus(401);
+    if (handleValidation(req, res)) {
+      // ...check if admin
+      if (req.user.isAdmin) {
+        const { name, desc, groupName, company, packSize, price } = req.body;
+        const resp = await Medicine.create({
+          name,
+          desc,
+          groupName,
+          company,
+          packSize,
+          price,
+        });
+        return res.status(201).json(resp);
+      } else {
+        // not admin
+        return res.sendStatus(401);
+      }
     }
   } catch (error) {
     return res

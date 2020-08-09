@@ -6,22 +6,25 @@ const { handleValidation } = require("../util/utils");
 
 // ...create new tips
 const createTips = async (req, res) => {
+  console.log(req.body);
   try {
-    handleValidation(req, res);
-    const { title, desc } = req.body;
-    // create tips
-    const resp = await Tips.create({
-      title,
-      desc,
-      author: req.user.id,
-    });
-    //find author
-    const author = await Doctor.findOne({ _id: req.user.id });
-    // pushh new tips to author
-    author.tipses.push(resp._id);
-    // save change
-    await author.save();
-    res.status(201).json(resp);
+    if (handleValidation(req, res)) {
+      const { title, desc, imageUrl } = req.body;
+      // create tips
+      const resp = await Tips.create({
+        title,
+        desc,
+        imageUrl,
+        author: req.user.id,
+      });
+      //find author
+      const author = await Doctor.findOne({ _id: req.user.id });
+      // pushh new tips to author
+      author.tipses.push(resp._id);
+      // save change
+      await author.save();
+      res.status(201).json(resp);
+    }
   } catch (error) {
     return res.sendStatus(500);
   }

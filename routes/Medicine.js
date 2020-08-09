@@ -24,7 +24,7 @@ router.post(
 router.get("/all", medicineController.getAllMedicine);
 
 // search medicine info
-router.get(
+router.post(
   "/search",
   medicineController.validate("query"),
   medicineController.searchMed
