@@ -33,4 +33,7 @@ router.post(
   medicineController.searchMed
 );
 
+// delete Medicine
+router.delete("/delete", varifyToken, medicineController.deleteMedicine);
+
 module.exports = router;

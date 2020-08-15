@@ -100,6 +100,7 @@ const DeleteTips = async (req, res) => {
       const id = req.query.id;
       const resp = await Tips.deleteOne({ _id: id });
       res.json(resp);
+      console.log(resp);
     } else {
       res.sendStatus(401);
     }

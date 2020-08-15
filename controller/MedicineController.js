@@ -1,4 +1,5 @@
 const { body } = require("express-validator");
+const mongoose = require("mongoose");
 const { handleValidation } = require("../util/utils");
 const Medicine = require("../models/Medicine");
 
@@ -129,6 +130,24 @@ const searchByGroup = async (query) => {
   }
 };
 
+const deleteMedicine = async (req, res) => {
+  try {
+    const validId = mongoose.isValidObjectId(req.query.id);
+    // check if admin and id is valid
+    if (req.user.isAdmin && validId) {
+      const id = req.query.id;
+      const resp = await Medicine.deleteOne({ _id: id });
+      res.json(resp);
+      console.log(resp);
+    } else {
+      res.sendStatus(401);
+    }
+  } catch (error) {
+    res.sendStatus(500);
+    console.log(error);
+  }
+};
+
 // ...validator and sanitizer
 const validate = (method) => {
   switch (method) {
@@ -165,6 +184,7 @@ module.exports = {
   updateMedicine,
   getAllMedicine,
   getSingleMedicine,
-  validate,
   searchMed,
+  deleteMedicine,
+  validate,
 };
