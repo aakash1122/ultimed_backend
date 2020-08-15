@@ -25,4 +25,7 @@ router.get("/all", tipsController.getAllTipses);
 // get detail of tips
 router.get("/detail/:id", tipsController.getTipsDetail);
 
+// delete tips
+router.delete("/delete", varifyToken, tipsController.DeleteTips);
+
 module.exports = router;

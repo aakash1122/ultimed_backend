@@ -36,26 +36,28 @@ const addMedicine = async (req, res) => {
 
 // ...update medicine
 const updateMedicine = async (req, res) => {
-  handleValidation(req, res);
-  try {
-    const { name, desc, groupName, company, packSize, price, _id } = req.body;
-    const resp = await Medicine.updateOne(
-      { _id: _id },
-      {
-        name,
-        desc,
-        groupName,
-        company,
-        packSize,
-        price,
-      }
-    );
-    console.log(resp);
-    if (!resp) res.sendStatus(404);
-    return res.status(201).json(resp);
-  } catch (error) {
-    console.error(error);
-    return res.sendStatus(500);
+  if (handleValidation(req, res)) {
+    try {
+      const { name, desc, groupName, company, packSize, price, _id } = req.body;
+      console.log(req.body);
+      const resp = await Medicine.updateOne(
+        { _id: _id },
+        {
+          name,
+          desc,
+          groupName,
+          company,
+          packSize,
+          price,
+        }
+      );
+      console.log(resp);
+      if (!resp) res.sendStatus(404);
+      return res.status(201).json(resp);
+    } catch (error) {
+      console.error(error);
+      return res.sendStatus(500);
+    }
   }
 };
 
@@ -66,6 +68,16 @@ const getAllMedicine = async (req, res) => {
     return res.status(200).json(allMedicines);
   } catch (error) {
     return res.sendStatus(500);
+  }
+};
+
+const getSingleMedicine = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const med = await Medicine.findOne({ _id: id });
+    return res.status(200).json(med);
+  } catch (error) {
+    return res.status(404).send("Not found");
   }
 };
 
@@ -123,11 +135,7 @@ const validate = (method) => {
     case "addMedicine": {
       return [
         body("name").trim().notEmpty().withMessage("Name Required").escape(),
-        body("desc")
-          .trim()
-          .notEmpty()
-          .withMessage("Description required")
-          .escape(),
+        body("desc").trim().notEmpty().withMessage("Description required"),
         body("groupName")
           .trim()
           .notEmpty()
@@ -156,6 +164,7 @@ module.exports = {
   addMedicine,
   updateMedicine,
   getAllMedicine,
+  getSingleMedicine,
   validate,
   searchMed,
 };

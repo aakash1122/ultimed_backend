@@ -8,6 +8,8 @@ const {
   checkPassword,
 } = require("../util/utils");
 const Doctor = require("../models/Doctor");
+const Medicine = require("../models/Medicine");
+const Tips = require("../models/Tips");
 
 // ...register new doctor
 const createDoctor = async (req, res) => {
@@ -75,9 +77,26 @@ const profile = async (req, res) => {
   try {
     const id = req.params.id;
     const profile = await Doctor.findOne({ _id: id })
-      .populate("tipses")
+      .populate({
+        path: "tipses",
+        populate: {
+          path: "author",
+        },
+      })
       .select("-password");
-    return res.status(200).json(profile);
+    if (profile.isAdmin) {
+      const totalUsers = await Doctor.countDocuments();
+      const totaltips = await Tips.countDocuments();
+      const totalMedicine = await Medicine.countDocuments();
+      const counts = {
+        "total users": totalUsers,
+        "total tips": totaltips,
+        "total medicines": totalMedicine,
+      };
+      return res.status(200).json({ profile, counts });
+    }
+    console.log(profile.counts);
+    return res.status(200).json({ profile });
   } catch (error) {
     console.log(error);
     return res.sendStatus(404);

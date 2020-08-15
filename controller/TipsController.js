@@ -1,4 +1,5 @@
 const { body } = require("express-validator");
+const mongoose = require("mongoose");
 
 const Tips = require("../models/Tips");
 const Doctor = require("../models/Doctor");
@@ -6,7 +7,6 @@ const { handleValidation } = require("../util/utils");
 
 // ...create new tips
 const createTips = async (req, res) => {
-  console.log(req.body);
   try {
     if (handleValidation(req, res)) {
       const { title, desc, imageUrl } = req.body;
@@ -33,19 +33,23 @@ const createTips = async (req, res) => {
 // update Tips
 const updataTips = async (req, res) => {
   try {
-    handleValidation(req, res);
-    const { title, desc, _id } = req.body;
-    const tips = await Tips.findOne({ _id });
-    console.log(tips);
-    if (!tips) res.sendStatus(404);
-    // check author
-    if (tips.author.toString() === req.user.id.toString()) {
-      tips.title = title;
-      tips.desc = desc;
-      await tips.save();
-      res.status(202).json(tips);
-    } else {
-      return res.sendStatus(401);
+    if (handleValidation(req, res)) {
+      const { title, desc, imageUrl, _id } = req.body;
+      const originalTips = await Tips.findById({ _id: _id });
+      // check author
+      if (originalTips.author.toString() === req.user.id.toString()) {
+        const tips = await Tips.updateOne(
+          { _id },
+          {
+            title,
+            desc,
+            imageUrl,
+          }
+        );
+        res.status(201).json(tips);
+      } else {
+        return res.sendStatus(401);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -88,6 +92,23 @@ const getTipsDetail = async (req, res) => {
   }
 };
 
+const DeleteTips = async (req, res) => {
+  try {
+    const validId = mongoose.isValidObjectId(req.query.id);
+    // check if admin and id is valid
+    if (req.user.isAdmin && validId) {
+      const id = req.query.id;
+      const resp = await Tips.deleteOne({ _id: id });
+      res.json(resp);
+    } else {
+      res.sendStatus(401);
+    }
+  } catch (error) {
+    res.sendStatus(500);
+    console.log(error);
+  }
+};
+
 // ...validator
 const validate = (method) => {
   switch (method) {
@@ -116,5 +137,6 @@ module.exports = {
   updataTips,
   getAllTipses,
   getTipsDetail,
+  DeleteTips,
   validate,
 };

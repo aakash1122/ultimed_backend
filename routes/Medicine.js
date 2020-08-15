@@ -23,6 +23,9 @@ router.post(
 // ...get all medicine
 router.get("/all", medicineController.getAllMedicine);
 
+// ...get single medicine
+router.get("/:id", medicineController.getSingleMedicine);
+
 // search medicine info
 router.post(
   "/search",
