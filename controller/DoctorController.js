@@ -10,6 +10,7 @@ const {
 const Doctor = require("../models/Doctor");
 const Medicine = require("../models/Medicine");
 const Tips = require("../models/Tips");
+const { deleteAllTipsOfUser } = require("./TipsController");
 
 // ...register new doctor
 const createDoctor = async (req, res) => {
@@ -47,29 +48,30 @@ const createDoctor = async (req, res) => {
 
 // ...login doctor
 const loginDoctor = async (req, res) => {
-  handleValidation(req, res);
-  const { email, password } = req.body;
-  try {
-    const user = await Doctor.findOne({ email });
-    if (user) {
-      const passMatched = checkPassword(password, user.password);
-      if (passMatched) {
-        const userdata = {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          isAdmin: user.isAdmin,
-        };
-        // send user jwt
-        const token = jwt.sign(userdata, process.env.JWT_SECRET);
-        return res.json({ token: token, data: userdata });
-      } else {
-        return res.status(404).send("User not found");
+  if (handleValidation) {
+    const { email, password } = req.body;
+    try {
+      const user = await Doctor.findOne({ email });
+      if (user) {
+        const passMatched = checkPassword(password, user.password);
+        if (passMatched) {
+          const userdata = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+          };
+          // send user jwt
+          const token = jwt.sign(userdata, process.env.JWT_SECRET);
+          return res.json({ token: token, data: userdata });
+        } else {
+          return res.status(404).send("User not found");
+        }
       }
+      return res.status(404).send("User not found");
+    } catch (error) {
+      console.log(error);
     }
-    return res.status(404).send("User not found");
-  } catch (error) {
-    console.log(error);
   }
 };
 
@@ -100,6 +102,38 @@ const profile = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.sendStatus(404);
+  }
+};
+
+const allUsers = async (req, res) => {
+  if (handleValidation) {
+    console.log(req.user);
+    if (req.user.isAdmin) {
+      const users = await Doctor.find({ isAdmin: false });
+      return res.json(users);
+    }
+    return res.sendStatus(401);
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    if (handleValidation) {
+      if (req.user.isAdmin) {
+        const idOfUser = req.body.id;
+        const user = await Doctor.findOne({ _id: idOfUser });
+        if (user) {
+          const tips = await deleteAllTipsOfUser(idOfUser);
+          const resp = await Doctor.deleteOne({ _id: idOfUser });
+          res.status(200).json({ resp, tips });
+        }
+      } else {
+        return res.sendStatus(401);
+      }
+    }
+  } catch (error) {
+    res.sendStatus(500);
+    console.log(error);
   }
 };
 
@@ -152,4 +186,11 @@ const validate = (method) => {
   }
 };
 
-module.exports = { validate, createDoctor, loginDoctor, profile };
+module.exports = {
+  validate,
+  createDoctor,
+  loginDoctor,
+  profile,
+  allUsers,
+  deleteUser,
+};

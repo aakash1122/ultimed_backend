@@ -110,6 +110,11 @@ const DeleteTips = async (req, res) => {
   }
 };
 
+const deleteAllTipsOfUser = async (id) => {
+  const tipses = await Tips.deleteMany({ author: id });
+  return tipses;
+};
+
 // ...validator
 const validate = (method) => {
   switch (method) {
@@ -139,5 +144,6 @@ module.exports = {
   getAllTipses,
   getTipsDetail,
   DeleteTips,
+  deleteAllTipsOfUser,
   validate,
 };
