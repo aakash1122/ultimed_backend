@@ -48,7 +48,7 @@ const createDoctor = async (req, res) => {
 
 // ...login doctor
 const loginDoctor = async (req, res) => {
-  if (handleValidation) {
+  if (handleValidation(req, res)) {
     const { email, password } = req.body;
     try {
       const user = await Doctor.findOne({ email });
@@ -106,7 +106,7 @@ const profile = async (req, res) => {
 };
 
 const allUsers = async (req, res) => {
-  if (handleValidation) {
+  if (handleValidation(req, res)) {
     console.log(req.user);
     if (req.user.isAdmin) {
       const users = await Doctor.find({ isAdmin: false });
@@ -118,7 +118,7 @@ const allUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    if (handleValidation) {
+    if (handleValidation(req, res)) {
       if (req.user.isAdmin) {
         const idOfUser = req.body.id;
         const user = await Doctor.findOne({ _id: idOfUser });
