@@ -65,9 +65,18 @@ const updateMedicine = async (req, res) => {
 // ...get all medicine
 const getAllMedicine = async (req, res) => {
   try {
-    const allMedicines = await Medicine.find({});
+    let current = Number(req.query.page) || 1;
+    // data limit
+    let perPage = 8;
+    // console.log("skip: ", perPage * current - perPage);
+    console.log(current);
+    const allMedicines = await Medicine.find({})
+      .skip(perPage * current - perPage)
+      .limit(perPage)
+      .sort({ date: -1 });
     return res.status(200).json(allMedicines);
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 };
