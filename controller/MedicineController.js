@@ -68,8 +68,6 @@ const getAllMedicine = async (req, res) => {
     let current = Number(req.query.page) || 1;
     // data limit
     let perPage = 8;
-    // console.log("skip: ", perPage * current - perPage);
-    console.log(current);
     const allMedicines = await Medicine.find({})
       .skip(perPage * current - perPage)
       .limit(perPage)

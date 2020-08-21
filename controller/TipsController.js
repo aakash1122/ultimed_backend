@@ -60,11 +60,15 @@ const updataTips = async (req, res) => {
 // get all tips
 const getAllTipses = async (req, res) => {
   try {
+    let current = Number(req.query.page) || 1;
+    // data limit
+    let perPage = 6;
     // ..find all tips and exclude password and licence field from author
-    const tipses = await Tips.find({}).populate(
-      "author",
-      "-password -licenceNo"
-    );
+    const tipses = await Tips.find({})
+      .populate("author", "-password -licenceNo")
+      .skip(perPage * current - perPage)
+      .limit(perPage)
+      .sort({ date: -1 });
     return res.status(200).json(tipses);
   } catch (error) {
     console.log(error);
